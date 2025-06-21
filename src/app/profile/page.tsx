@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Edit, GraduationCap, Lightbulb, MapPin, Save, X, User, Mail } from "lucide-react";
+import { Edit, GraduationCap, Lightbulb, MapPin, Save, X, User, Mail, ExternalLink } from "lucide-react";
 
 // The user profile data, now used as the initial state
 const initialProfile = {
@@ -58,6 +58,14 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
+      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
+        <Button asChild>
+          <a href="#" target="_blank" rel="noopener noreferrer">
+            <ExternalLink className="mr-2 h-4 w-4" />
+            View Firebase Preview
+          </a>
+        </Button>
+      </div>
       <Card className="w-full max-w-4xl mx-auto shadow-2xl">
         <CardHeader className="p-0">
           <div className="relative">
