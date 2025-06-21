@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { BookOpen, LayoutDashboard, Search, Sparkles, UserCircle, Users } from 'lucide-react';
+import { BookOpen, LayoutDashboard, Search, Sparkles, UserCircle, Users, ExternalLink } from 'lucide-react';
 
 const menuItems = [
   { href: '/', label: 'Find a Match', icon: Sparkles },
@@ -64,6 +64,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={{ children: "View Firebase Preview", side: "right" }}
+              >
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink />
+                  <span>Firebase Preview</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
