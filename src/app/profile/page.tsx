@@ -13,7 +13,7 @@ import { Edit, GraduationCap, Lightbulb, MapPin, Save, X, User, Mail } from "luc
 // The user profile data, now used as the initial state
 const initialProfile = {
   name: 'Alex Doe',
-  email: 'alex.doe@example.com',
+  email: 'tradity555@gmail.com',
   location: 'San Francisco, CA',
   avatar: 'https://placehold.co/100x100/3385FF/FFFFFF.png',
   bio: 'Lifelong learner and full-stack developer with a passion for sharing knowledge in web technologies and learning creative arts.',

@@ -76,7 +76,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Avatar>
                 <div className="text-left">
                   <p className="text-sm font-medium">Alex Doe</p>
-                  <p className="text-xs text-muted-foreground">alex.doe@example.com</p>
+                  <p className="text-xs text-muted-foreground">tradity555@gmail.com</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
