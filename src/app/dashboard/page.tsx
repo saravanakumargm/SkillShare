@@ -1,10 +1,13 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RequestCard } from "@/components/request-card";
-import { dummyRequests } from "@/lib/data";
+import { useRequests } from "@/context/request-context";
 
 export default function DashboardPage() {
-  const incomingRequests = dummyRequests.filter(r => r.type === 'incoming');
-  const outgoingRequests = dummyRequests.filter(r => r.type === 'outgoing');
+  const { requests } = useRequests();
+  const incomingRequests = requests.filter(r => r.type === 'incoming');
+  const outgoingRequests = requests.filter(r => r.type === 'outgoing');
 
   return (
     <div className="container mx-auto p-4 md:p-8">

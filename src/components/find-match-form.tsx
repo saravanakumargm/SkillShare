@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 type FindMatchFormProps = {
   onSearchStart: () => void;
-  onSearchEnd: (results: MatchSkillRequestOutput | null) => void;
+  onSearchEnd: (results: MatchSkillRequestOutput | null, input: MatchSkillRequestInput) => void;
   onSearchError: (error: string) => void;
 };
 
@@ -46,13 +46,13 @@ export function FindMatchForm({ onSearchStart, onSearchEnd, onSearchError }: Fin
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     onSearchStart();
+    const input: MatchSkillRequestInput = {
+      ...values,
+      skillsOffered: values.skillsOffered.split(',').map(s => s.trim()),
+    };
     try {
-      const input: MatchSkillRequestInput = {
-        ...values,
-        skillsOffered: values.skillsOffered.split(',').map(s => s.trim()),
-      };
       const result = await matchSkillRequest(input);
-      onSearchEnd(result);
+      onSearchEnd(result, input);
     } catch (e: any) {
       console.error(e);
       onSearchError(e.message || 'An unexpected error occurred.');

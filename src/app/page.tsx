@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { FindMatchForm } from '@/components/find-match-form';
 import { MatchResults } from '@/components/match-results';
-import type { MatchSkillRequestOutput } from '@/ai/flows/match-skill-request';
+import type { MatchSkillRequestInput, MatchSkillRequestOutput } from '@/ai/flows/match-skill-request';
 
 export default function Home() {
   const [matches, setMatches] = useState<MatchSkillRequestOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastSearchInput, setLastSearchInput] = useState<MatchSkillRequestInput | null>(null);
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -26,19 +27,26 @@ export default function Home() {
               setIsLoading(true);
               setError(null);
               setMatches(null);
+              setLastSearchInput(null);
             }}
-            onSearchEnd={(result) => {
+            onSearchEnd={(result, input) => {
               setIsLoading(false);
               if (result) {
                 setMatches(result);
               }
+              setLastSearchInput(input);
             }}
             onSearchError={(e) => {
               setIsLoading(false);
               setError(e);
             }}
           />
-          <MatchResults isLoading={isLoading} error={error} results={matches} />
+          <MatchResults 
+            isLoading={isLoading} 
+            error={error} 
+            results={matches}
+            searchInput={lastSearchInput} 
+          />
         </main>
       </div>
     </div>
