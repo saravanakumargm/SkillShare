@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { SkillRequest } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { ArrowLeftRight, Check, CheckCircle, Clock, ThumbsUp, X } from "lucide-react"
+import { ArrowLeftRight, Check, CheckCircle, Clock, Loader2, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast";
+import { useRequests } from "@/context/request-context";
+import { sendEmail } from "@/ai/flows/send-email";
 
 
 type RequestCardProps = {
@@ -35,20 +38,71 @@ const statusConfig = {
 
 export function RequestCard({ request }: RequestCardProps) {
   const { toast } = useToast();
-  const { user, skillOffered, skillRequested, status, type } = request;
+  const { updateRequestStatus } = useRequests();
+  const { id, user, skillOffered, skillRequested, status, type } = request;
   const currentStatus = statusConfig[status];
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
+    setIsProcessing(true);
+    try {
+      await sendEmail({
+        to: 'tradity555@gmail.com', // The current user's email
+        from: 'noreply@skillswap.app',
+        subject: `Skill Swap Accepted with ${user.name}!`,
+        body: `
+          <h1>Congratulations!</h1>
+          <p>You have accepted a skill swap request from <strong>${user.name}</strong>.</p>
+          <p>Here are the details:</p>
+          <ul>
+            <li><strong>You will teach:</strong> ${skillRequested}</li>
+            <li><strong>You will learn:</strong> ${skillOffered}</li>
+          </ul>
+          <p>A calendar invite has been sent to both of you to coordinate a time.</p>
+          <p>Happy learning!</p>
+          <p>The SkillSwap Team</p>
+        `,
+      });
+
+      toast({
+        title: "Request Accepted!",
+        description: `Success! A confirmation email has been sent to your inbox.`,
+        action: (
+          <div className="p-1 rounded-full bg-green-500">
+            <CheckCircle className="h-5 w-5 text-white" />
+          </div>
+        ),
+      });
+      updateRequestStatus(id, 'accepted');
+
+    } catch (error) {
+      console.error("Failed to accept request:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem sending the confirmation email.",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+  
+  const handleDecline = () => {
+    updateRequestStatus(id, 'declined');
     toast({
-      title: "Request Accepted!",
-      description: `Success! A calendar invite has been sent to you and ${user.name}.`,
-       action: (
-        <div className="p-1 rounded-full bg-green-500">
-         <CheckCircle className="h-5 w-5 text-white" />
-        </div>
-      ),
+      title: "Request Declined",
+      description: `You have declined the request from ${user.name}.`,
+    });
+  };
+
+  const handleCancel = () => {
+    updateRequestStatus(id, 'declined');
+     toast({
+      title: "Request Canceled",
+      description: `You have canceled your request to ${user.name}.`,
     });
   }
+
 
   return (
     <Card className="flex flex-col shadow-md hover:shadow-xl transition-shadow duration-300">
@@ -80,16 +134,17 @@ export function RequestCard({ request }: RequestCardProps) {
       <CardFooter className="flex justify-end gap-2">
         {type === 'incoming' && status === 'pending' && (
           <>
-            <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600">
+            <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600" onClick={handleDecline} disabled={isProcessing}>
               <X className="mr-1.5 h-4 w-4" /> Decline
             </Button>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleAccept}>
-              <Check className="mr-1.5 h-4 w-4" /> Accept
+            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleAccept} disabled={isProcessing}>
+              {isProcessing ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Check className="mr-1.5 h-4 w-4" />}
+              {isProcessing ? 'Accepting...' : 'Accept'}
             </Button>
           </>
         )}
         {type === 'outgoing' && status === 'pending' && (
-          <Button variant="outline" size="sm">Cancel Request</Button>
+          <Button variant="outline" size="sm" onClick={handleCancel}>Cancel Request</Button>
         )}
       </CardFooter>
     </Card>

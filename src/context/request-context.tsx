@@ -8,6 +8,7 @@ import { dummyRequests } from '@/lib/data';
 interface RequestContextType {
   requests: SkillRequest[];
   addRequest: (request: SkillRequest) => void;
+  updateRequestStatus: (requestId: string, status: 'accepted' | 'declined') => void;
 }
 
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
@@ -19,8 +20,16 @@ export function RequestProvider({ children }: { children: ReactNode }) {
     setRequests(prevRequests => [request, ...prevRequests]);
   };
 
+  const updateRequestStatus = (requestId: string, status: 'accepted' | 'declined') => {
+    setRequests(prevRequests =>
+      prevRequests.map(req =>
+        req.id === requestId ? { ...req, status } : req
+      )
+    );
+  };
+
   return (
-    <RequestContext.Provider value={{ requests, addRequest }}>
+    <RequestContext.Provider value={{ requests, addRequest, updateRequestStatus }}>
       {children}
     </RequestContext.Provider>
   );
